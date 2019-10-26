@@ -14,7 +14,7 @@ First of all, you need the following components.
 - 1 &times; Servo Female to Male / Female to Female Wire, you will need to cut it to make a port on the tester.
 
 Then you wire all the components accordingly to the diagram below   
-![Wiring Diagram](Circuit Diagram/ServoTester-Circuit-Diagram.jpg)
+![Wiring Diagram](Circuit_Diagram/ServoTester-Circuit-Diagram.jpg)
 
 Finally, connect your Arduino Nano with a USB Micro-B wire.   
 You need to arrange the components to make them look aligned and professional, you can design a cardbox container for them, if you like.   
