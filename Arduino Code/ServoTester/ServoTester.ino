@@ -3,7 +3,7 @@
 const int SERVO_PIN = 3;
 const int CRSERVOSWITCH_PIN = 2;
 const int POTENTIOMETER_ANALOG_PIN = 0;
-const bool POTENTIOMETER_DIRECTION_REVERSED = false;
+const bool POTENTIOMETER_DIRECTION_REVERSED = true;
 const int POTENTIOMETER_CRSERVO_MARGIN = 50;
 
 Servo mServo = Servo();
