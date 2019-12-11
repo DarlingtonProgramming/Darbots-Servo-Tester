@@ -3,8 +3,9 @@
 const int SERVO_PIN = 3;
 const int CRSERVOSWITCH_PIN = 2;
 const int POTENTIOMETER_ANALOG_PIN = 0;
-const bool POTENTIOMETER_DIRECTION_REVERSED = true;
-const int POTENTIOMETER_CRSERVO_MARGIN = 50;
+const bool POTENTIOMETER_DIRECTION_REVERSED = false;
+const int POTENTIOMETER_CRSERVO_MARGIN_DEG = 20;
+const int ERROR_ANGLE_MARGIN = 2;
 
 Servo mServo = Servo();
 int lastAng = 0;
@@ -20,33 +21,40 @@ void loop() {
   // put your main code here, to run repeatedly:
   bool isCRServo = digitalRead(CRSERVOSWITCH_PIN) == HIGH;
   int CRServoVal = analogRead(POTENTIOMETER_ANALOG_PIN);
-  if(POTENTIOMETER_DIRECTION_REVERSED)
+  if(!POTENTIOMETER_DIRECTION_REVERSED)
     CRServoVal = 1023 - CRServoVal;
 
   int Ang = 0;
-  if(isCRServo && (CRServoVal >= (1024/2) - POTENTIOMETER_CRSERVO_MARGIN) && (CRServoVal <= (1024/2) + POTENTIOMETER_CRSERVO_MARGIN)){
-    Ang = 90;
+  int AngToWrite = 0;
+  Ang = map(CRServoVal,0,1023,0,180);
+
+  if(isCRServo && Ang >= 90 - POTENTIOMETER_CRSERVO_MARGIN_DEG && Ang <= 90 + POTENTIOMETER_CRSERVO_MARGIN_DEG){
+    AngToWrite = 90;
   }else{
-    Ang = map(CRServoVal,0,1023,0,180);
+    AngToWrite = Ang;
   }
 
-  mServo.write(Ang);
+  mServo.write(AngToWrite);
 
   double FTCServoVal = ((double) Ang) / 180.0;
   double FTCCRServoSpeed = (((double) Ang) - 90.0) / 90.0;
+  double FTCCRServoActualSpeed = (((double) AngToWrite) - 90.0) / 90.0;
 
-  if(lastAng != Ang || lastCRServo != isCRServo){
+  if(lastCRServo != isCRServo || ((lastAng - Ang) < -ERROR_ANGLE_MARGIN || (lastAng-Ang) > ERROR_ANGLE_MARGIN)){
     if(!isCRServo){
-      Serial.print("Servo: ");
-      Serial.print(Ang);
-      Serial.print(" deg, ");
+      Serial.println("Servo: ");
+      Serial.print("  deg: ");
+      Serial.println(Ang);
+      Serial.print("  FTCVal: ");
       Serial.println(FTCServoVal);
     }else{
-      Serial.print("CRServo: ");
+      Serial.println("CRServo: ");
+      Serial.print("  Actual Speed Written: ");
+      Serial.println(FTCCRServoActualSpeed);
+      Serial.print("  Speed: ");
       Serial.println(FTCCRServoSpeed);
     }
+    lastAng = Ang;
+    lastCRServo = isCRServo;
   }
-  
-  lastAng = Ang;
-  lastCRServo = isCRServo;
 }
