@@ -6,6 +6,11 @@ const int POTENTIOMETER_ANALOG_PIN = 0;
 const bool POTENTIOMETER_DIRECTION_REVERSED = false;
 const int POTENTIOMETER_CRSERVO_MARGIN_DEG = 20;
 const int ERROR_ANGLE_MARGIN = 2;
+const int PWM_LOWER_RANGE_uS = 1000;
+const int PWM_UPPER_RANGE_uS = 2000;
+const double SERVO_MAX_ANG = 180.0;
+
+const int PWM_RANGE_DELTA = PWM_UPPER_RANGE_uS - PWM_LOWER_RANGE_uS;
 
 Servo mServo = Servo();
 int lastAng = 0;
@@ -17,6 +22,10 @@ void setup() {
   pinMode(CRSERVOSWITCH_PIN,INPUT);
 }
 
+int roundNum(double number){
+  return (int) (number + 0.5);
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
   bool isCRServo = digitalRead(CRSERVOSWITCH_PIN) == HIGH;
@@ -24,21 +33,23 @@ void loop() {
   if(!POTENTIOMETER_DIRECTION_REVERSED)
     CRServoVal = 1023 - CRServoVal;
 
-  int Ang = 0;
-  int AngToWrite = 0;
-  Ang = map(CRServoVal,0,1023,0,180);
+  double Ang = 0;
+  double AngToWrite = 0;
+  Ang = ((double) CRServoVal) / 1023.0 * SERVO_MAX_ANG; //map(CRServoVal,0,1023,0,180);
 
   if(isCRServo && Ang >= 90 - POTENTIOMETER_CRSERVO_MARGIN_DEG && Ang <= 90 + POTENTIOMETER_CRSERVO_MARGIN_DEG){
-    AngToWrite = 90;
+    AngToWrite = SERVO_MAX_ANG / 2.0;
   }else{
     AngToWrite = Ang;
   }
 
-  mServo.write(AngToWrite);
+  int pulseToWrite = roundNum(AngToWrite / SERVO_MAX_ANG * PWM_RANGE_DELTA) + PWM_LOWER_RANGE_uS;
 
-  double FTCServoVal = ((double) Ang) / 180.0;
-  double FTCCRServoSpeed = (((double) Ang) - 90.0) / 90.0;
-  double FTCCRServoActualSpeed = (((double) AngToWrite) - 90.0) / 90.0;
+  mServo.writeMicroseconds(pulseToWrite);
+
+  double FTCServoVal = ((double) Ang) / SERVO_MAX_ANG;
+  double FTCCRServoSpeed = (((double) Ang) / SERVO_MAX_ANG) - 1.0;
+  double FTCCRServoActualSpeed = (((double) AngToWrite) / SERVO_MAX_ANG) - 1.0;
 
   if(lastCRServo != isCRServo || ((lastAng - Ang) < -ERROR_ANGLE_MARGIN || (lastAng-Ang) > ERROR_ANGLE_MARGIN)){
     if(!isCRServo){
