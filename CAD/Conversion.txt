@@ -1,0 +1,16 @@
+Conversion Report:
+Created by DWG TrueView DWG Convert 2019Äê12ÔÂ10ÈÕ, 20:11.
+
+Conversion Summary
+------------------
+Conversion File Format:  AutoCAD 2004/LT 2004 Drawing Format
+Conversion package type: In-place (overwrite files)
+Converted DWG files:     1
+Recovered DWG files:     0
+Conversion errors:       0
+
+
+Converted Files
+---------------
+Root Drawings:
+	F:\Robotics\CAD\20191210 Servo Tester Case\Panel.dwg
