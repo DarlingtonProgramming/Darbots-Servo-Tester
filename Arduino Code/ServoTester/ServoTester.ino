@@ -6,9 +6,9 @@ const int POTENTIOMETER_ANALOG_PIN = 0;
 const bool POTENTIOMETER_DIRECTION_REVERSED = false;
 const int POTENTIOMETER_CRSERVO_MARGIN_DEG = 20;
 const int ERROR_ANGLE_MARGIN = 2;
-const int PWM_LOWER_RANGE_uS = 1000;
-const int PWM_UPPER_RANGE_uS = 2000;
-const double SERVO_MAX_ANG = 180.0;
+const int PWM_LOWER_RANGE_uS = 600;
+const int PWM_UPPER_RANGE_uS = 2400;
+const double SERVO_MAX_ANG = 360.0;
 
 const int PWM_RANGE_DELTA = PWM_UPPER_RANGE_uS - PWM_LOWER_RANGE_uS;
 
@@ -48,8 +48,8 @@ void loop() {
   mServo.writeMicroseconds(pulseToWrite);
 
   double FTCServoVal = ((double) Ang) / SERVO_MAX_ANG;
-  double FTCCRServoSpeed = (((double) Ang) / SERVO_MAX_ANG) - 1.0;
-  double FTCCRServoActualSpeed = (((double) AngToWrite) / SERVO_MAX_ANG) - 1.0;
+  double FTCCRServoSpeed = (((double) Ang * 2) / SERVO_MAX_ANG) - 1.0;
+  double FTCCRServoActualSpeed = (((double) AngToWrite * 2) / SERVO_MAX_ANG) - 1.0;
 
   if(lastCRServo != isCRServo || ((lastAng - Ang) < -ERROR_ANGLE_MARGIN || (lastAng-Ang) > ERROR_ANGLE_MARGIN)){
     if(!isCRServo){
